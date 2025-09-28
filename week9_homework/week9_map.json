@@ -1,0 +1,95 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+
+  "width": 1300,
+  "height": 600,
+  "projection": {
+    "type": "mercator",
+    "center": [107.6, 4.2105],
+    "scale": 3500,
+    "translate": [550, 250]
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/malaysia_states.json",
+    "format": {
+      "type": "topojson",
+      "feature": "malaysia_states"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.name_en",
+      "from": {
+        "data": {
+          "url": "data/education_clean_2021.csv"
+        },
+        "key": "State",
+        "fields": ["Tertiary_Percentage", "Longitude", "Latitude"]
+      }
+    }
+  ],
+  "layer": [
+    {
+      "data": {"sphere": true},
+      "mark": {"type": "geoshape", "fill": "#e4f2ff"}
+    },
+    {
+      "data": {"graticule": {"step": [2, 2]}},
+      "mark": {
+        "type": "geoshape",
+        "stroke": "lightgrey",
+        "strokeWidth": 0.8,
+        "opacity": 0.8
+      }},
+    {
+      "mark": {"type": "geoshape", "stroke": "dimgrey"},
+      "encoding": {
+              "color": {
+                "field": "Tertiary_Percentage",
+                "type": "quantitative",
+                "title": "Tertiary (%)",
+                "scale": {"scheme": "greenblue"},
+          "legend": {
+            "titleAlign": "center",
+            "titleAnchor": "middle",
+            "titleFontSize": 17,
+            "labelFontSize": 15
+          }
+        },
+        "tooltip": [
+          {"field": "properties.name_en", "title": "State"},
+          {"field": "Tertiary_Percentage", "title": "Tertiary (%)"}
+        ]
+      }
+    },
+    {
+    "data": {
+        "url": "data/education_clean_2021.csv"
+    },
+    "transform": [{"filter": "datum.State != 'Kedah'"}],
+    "mark": {"type": "rule", "color":"grey", "strokeWidth": 1},
+    "encoding": {
+      "longitude": {"field": "Longitude"},
+      "latitude": {"field": "Latitude"},
+      "longitude2": {"field": "Longitude2"},
+      "latitude2": {"field": "Latitude2"}
+    }
+    },
+    {
+      "data": {
+        "url":"data/education_clean_2021.csv"
+      },
+      "mark": {
+        "type": "text",
+        "fontSize": 12,
+        "color": "black",
+        "dy": 10
+      },    
+      "encoding": {
+      "longitude": {"field": "Longitude2"},
+      "latitude": {"field": "Latitude2"},
+      "text": {"field": "State"}
+    }
+    }
+  ]
+}
