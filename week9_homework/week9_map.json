@@ -77,7 +77,7 @@
     },
     {
       "data": {
-        "url": "data/education_clean_2021.csv"
+        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
       },
       "mark": {
         "type": "text",
