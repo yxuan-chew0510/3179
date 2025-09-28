@@ -20,7 +20,7 @@
       "lookup": "properties.name_en",
       "from": {
         "data": {
-          "url": "data/education_clean_2021.csv"
+          "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
         },
         "key": "State",
         "fields": ["Tertiary_Percentage", "Longitude", "Latitude"]
@@ -64,7 +64,7 @@
     },
     {
       "data": {
-        "url": "data/education_clean_2021.csv"
+        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
       },
       "transform": [{"filter": "datum.State != 'Kedah'"}],
       "mark": {"type": "rule", "color": "grey", "strokeWidth": 1},
