@@ -1,7 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-
-  "width": 1300,
+  "width": 1280,
   "height": 600,
   "projection": {
     "type": "mercator",
@@ -40,15 +39,16 @@
         "stroke": "lightgrey",
         "strokeWidth": 0.8,
         "opacity": 0.8
-      }},
+      }
+    },
     {
       "mark": {"type": "geoshape", "stroke": "dimgrey"},
       "encoding": {
-              "color": {
-                "field": "Tertiary_Percentage",
-                "type": "quantitative",
-                "title": "Tertiary (%)",
-                "scale": {"scheme": "greenblue"},
+        "color": {
+          "field": "Tertiary_Percentage",
+          "type": "quantitative",
+          "title": "Percentage (%)",
+          "scale": {"scheme": "greenblue"},
           "legend": {
             "titleAlign": "center",
             "titleAnchor": "middle",
@@ -58,38 +58,38 @@
         },
         "tooltip": [
           {"field": "properties.name_en", "title": "State"},
-          {"field": "Tertiary_Percentage", "title": "Tertiary (%)"}
+          {"field": "Tertiary_Percentage", "title": "Population of Tertiary Education (%)", "format": ".2f"}
         ]
       }
     },
     {
-    "data": {
+      "data": {
         "url": "data/education_clean_2021.csv"
-    },
-    "transform": [{"filter": "datum.State != 'Kedah'"}],
-    "mark": {"type": "rule", "color":"grey", "strokeWidth": 1},
-    "encoding": {
-      "longitude": {"field": "Longitude"},
-      "latitude": {"field": "Latitude"},
-      "longitude2": {"field": "Longitude2"},
-      "latitude2": {"field": "Latitude2"}
-    }
+      },
+      "transform": [{"filter": "datum.State != 'Kedah'"}],
+      "mark": {"type": "rule", "color": "grey", "strokeWidth": 1},
+      "encoding": {
+        "longitude": {"field": "Longitude"},
+        "latitude": {"field": "Latitude"},
+        "longitude2": {"field": "Longitude2"},
+        "latitude2": {"field": "Latitude2"}
+      }
     },
     {
       "data": {
-        "url":"data/education_clean_2021.csv"
+        "url": "data/education_clean_2021.csv"
       },
       "mark": {
         "type": "text",
         "fontSize": 12,
         "color": "black",
         "dy": 10
-      },    
+      },
       "encoding": {
-      "longitude": {"field": "Longitude2"},
-      "latitude": {"field": "Latitude2"},
-      "text": {"field": "State"}
-    }
+        "longitude": {"field": "Longitude2"},
+        "latitude": {"field": "Latitude2"},
+        "text": {"field": "State"}
+      }
     }
   ]
 }
