@@ -1,0 +1,104 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 1400,
+  "height": 600,
+    "autosize": {"type": "fit"},
+  "projection": {
+    "type": "mercator",
+    "center": [107.6, 4.2105],
+    "scale": 3500,
+    "translate": [550, 250]
+  },
+  "title": {
+    "text": "Choropleth Map: Percentage of Labour Force with Tertiary Education in Malaysia (2021)",
+    "fontSize": 20,
+    "anchor": "start",
+    "subtitle": ["Each state is shaded according to the percentage of its labour force holding tertiary qualifications.",
+    "Data Source: Department of Statistics Malaysia (DOSM), 2021" ]
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week10_homework/malaysia_states.json",
+    "format": {
+      "type": "topojson",
+      "feature": "malaysia_states"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.name_en",
+      "from": {
+        "data": {
+          "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week10_homework/education_clean_2021.csv"
+        },
+        "key": "State",
+        "fields": ["Tertiary_Percentage", "Longitude", "Latitude"]
+      }
+    }
+  ],
+  "layer": [
+    {
+      "data": {"sphere": true},
+      "mark": {"type": "geoshape", "fill": "#e4f2ff"}
+    },
+    {
+      "data": {"graticule": {"step": [2, 2]}},
+      "mark": {
+        "type": "geoshape",
+        "stroke": "lightgrey",
+        "strokeWidth": 0.8,
+        "opacity": 0.8
+      }
+    },
+    {
+      "mark": {"type": "geoshape", "stroke": "dimgrey"},
+      "encoding": {
+        "color": {
+          "field": "Tertiary_Percentage",
+          "type": "quantitative",
+          "title": "Percentage (%)",
+          "scale": {"scheme": "greenblue"},
+          "legend": {
+            "gradientLength": 300,       
+            "titleAlign": "center",
+            "titleAnchor": "middle",
+            "titleFontSize": 15,
+            "labelFontSize": 14  
+          }
+        },
+        "tooltip": [
+          {"field": "properties.name_en", "title": "State"},
+          {"field": "Tertiary_Percentage", "title": "Population of Tertiary Education (%)", "format": ".2f"}
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
+      },
+      "transform": [{"filter": "datum.State != 'Kedah'"}],
+      "mark": {"type": "rule", "color": "grey", "strokeWidth": 1},
+      "encoding": {
+        "longitude": {"field": "Longitude"},
+        "latitude": {"field": "Latitude"},
+        "longitude2": {"field": "Longitude2"},
+        "latitude2": {"field": "Latitude2"}
+      }
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
+      },
+      "mark": {
+        "type": "text",
+        "fontSize": 12,
+        "color": "black",
+        "dy": 10
+      },
+      "encoding": {
+        "longitude": {"field": "Longitude2"},
+        "latitude": {"field": "Latitude2"},
+        "text": {"field": "State"}
+      }
+    }
+  ]
+}

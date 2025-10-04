@@ -1,0 +1,42 @@
+html,
+body {
+    background-color: #ffffff;
+}
+
+.main-title {
+  font-size: 2em;
+  text-align: center;
+  margin-top: 10px;   /* 🔽 reduce from default (usually ~40px) */
+  margin-bottom: 10px; /* 🔽 was likely 30–40px before */
+  padding: 10px 0;     /* optional, keeps it balanced */
+  background-color: #eaf4f9; /* optional: light highlight band */
+}
+
+#text_div {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+h1 {
+    background-color: #def9ff;
+    text-align: center;
+    color: #1b2837;
+    font-size: 40px;
+}
+
+p {
+    color: #527298;
+    font-size: 16px;
+}
+
+#map_projection {
+  display: flex;
+  justify-content: center;       /* ensures it never gets too wide */
+  transform-origin: center;    /* shrink from center, not top-left */
+}
+
+#chart_comparison {
+  display: flex;
+  justify-content: center;       /* ensures it never gets too wide */
+  transform-origin: center;    /* shrink from center, not top-left */
+}
