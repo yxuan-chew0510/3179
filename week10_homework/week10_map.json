@@ -1,0 +1,127 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 800,
+  "height": 500,
+  "title": {
+    "text": "Education Composition in Malaysia’s Labour Force (2000–2021)",
+    "fontSize": 20,
+    "anchor": "start",
+    "subtitle": "Proportion of labour force by education level, 2000–2021"
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week10_homework/education_raw_complete.csv"
+  },
+
+  "params": [
+    {
+      "name": "state_selection",
+      "bind": {
+        "input": "select",
+        "options": [
+          "Johor", "Kedah", "Kelantan", "Melaka", "Negeri Sembilan",
+          "Pahang", "Perak", "Perlis", "Penang", "Sabah", "Sarawak",
+          "Selangor", "Terengganu", "Kuala Lumpur", "Labuan", "Putrajaya"
+        ],
+        "labels": [
+          "Johor", "Kedah", "Kelantan", "Melaka", "Negeri Sembilan",
+          "Pahang", "Perak", "Perlis", "Penang", "Sabah", "Sarawak",
+          "Selangor", "Terengganu", "Kuala Lumpur", "Labuan", "Putrajaya"
+        ],
+        "name": "Select State: "
+      },
+      "value": "Johor"
+    }
+  ],
+
+  "transform": [
+    {"filter": "datum.State == state_selection"}
+  ],
+
+  "layer": [
+    {
+      "mark": {"type": "area", "interpolate": "monotone"},
+      "encoding": {
+        "x": {"field": "Year", "type": "ordinal", "title": "Year", "axis": {"labelAngle": 0}},
+        "y": {
+          "field": "Percentage",
+          "type": "quantitative",
+          "stack": "normalize",
+          "title": "Proportion of Labour Force",
+          "axis": {"format": "%"}
+        },
+        "color": {
+          "field": "Educational attainment",
+          "type": "nominal",
+          "title": "Education Level",
+          "scale": {
+            "domain": ["No formal education", "Primary", "Secondary", "Tertiary"],
+              "range": ["#e5f5e0", "#a1d99b", "#31a354", "#006d2c"]
+          }
+        },
+        "tooltip": [
+          {"field": "State", "title": "State"},
+          {"field": "Educational attainment", "title": "Education Level"},
+          {"field": "Year", "title": "Year"},
+          {"field": "Percentage", "title": "Proportion", "format": ".2%"}
+        ]
+      }
+    },
+    {
+      "mark": {"type": "line", "interpolate": "monotone", "color": "white", "strokeWidth": 1},
+      "encoding": {
+        "x": {"field": "Year", "type": "ordinal"},
+        "y": {"field": "Percentage", "type": "quantitative", "stack": "normalize"},
+        "detail": {"field": "Educational attainment"}
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {"year": "2005", "color": "#1f77b4"},
+          {"year": "2015", "color": "#d62728"}
+        ]
+      },
+      "mark": {"type": "rule", "strokeDash": [4, 4], "strokeWidth": 2},
+      "encoding": {
+        "x": {"field": "year", "type": "ordinal"},
+        "color": {"field": "color", "type": "nominal", "scale": null}
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "year": "2005",
+            "label": "2005: Launch of Education Blueprint",
+            "color": "#1f77b4"
+          },
+          {
+            "year": "2015",
+            "label": "2015: Education Reform Initiative",
+            "color": "#d62728"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "bottom",
+        "dy": -10,
+        "dx": 5,
+        "fontSize": 12,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {"field": "year", "type": "ordinal"},
+        "y": {"datum": 1},
+        "text": {"field": "label"},
+        "color": {"field": "color", "type": "nominal", "scale": null}
+      }
+    }
+  ],
+
+  "config": {
+    "view": {"stroke": "transparent"},
+    "legend": {"titleFontSize": 13, "labelFontSize": 12}
+  }
+}
