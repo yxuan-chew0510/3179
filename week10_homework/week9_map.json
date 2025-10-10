@@ -2,7 +2,7 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "width": 1400,
   "height": 600,
-    "autosize": {"type": "fit"},
+  "autosize": {"type": "fit"},
   "projection": {
     "type": "mercator",
     "center": [107.6, 4.2105],
@@ -10,36 +10,32 @@
     "translate": [550, 250]
   },
   "title": {
-    "text": "Choropleth Map: Percentage of Labour Force with Tertiary Education in Malaysia (2021)",
+    "text": "Tertiary Education Attainment vs Employment by State (2011–2021)",
+    "subtitle": "Colour: % Tertiary Education | Tooltip: Unemployment & Participation Rates",
     "fontSize": 20,
-    "anchor": "start",
-    "subtitle": ["Each state is shaded according to the percentage of its labour force holding tertiary qualifications.",
-    "Data Source: Department of Statistics Malaysia (DOSM), 2021" ]
+    "anchor": "start"
   },
-  "data": {
-    "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week10_homework/malaysia_states.json",
-    "format": {
-      "type": "topojson",
-      "feature": "malaysia_states"
-    }
-  },
-  "transform": [
+
+  "params": [
     {
-      "lookup": "properties.name_en",
-      "from": {
-        "data": {
-          "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week10_homework/education_clean_2021.csv"
-        },
-        "key": "State",
-        "fields": ["Tertiary_Percentage", "Longitude", "Latitude"]
+      "name": "year_select",
+      "value": 2021,
+      "bind": {
+        "input": "range",
+        "min": 2011,
+        "max": 2021,
+        "step": 1,
+        "name": "Select Year: "
       }
     }
   ],
+
   "layer": [
     {
       "data": {"sphere": true},
       "mark": {"type": "geoshape", "fill": "#e4f2ff"}
     },
+
     {
       "data": {"graticule": {"step": [2, 2]}},
       "mark": {
@@ -49,28 +45,62 @@
         "opacity": 0.8
       }
     },
+
     {
+      "data": {
+        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
+      },
+      "transform": [
+        {"filter": "datum.education_level == 'Tertiary'"},
+        {"filter": "toNumber(datum.year) == year_select"},
+        {
+          "lookup": "state",
+          "from": {
+            "data": {
+              "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/malaysia_states.json",
+              "format": {"type": "topojson", "feature": "malaysia_states"}
+            },
+            "key": "properties.name_en"
+          },
+          "as": "geo"
+        },
+        {
+          "calculate": "datum.percentage * 100",
+          "as": "percentage_display"
+        }
+      ],
       "mark": {"type": "geoshape", "stroke": "dimgrey"},
       "encoding": {
+        "shape": {"field": "geo", "type": "geojson"},
         "color": {
-          "field": "Tertiary_Percentage",
+          "field": "percentage_display",
           "type": "quantitative",
-          "title": "Percentage (%)",
-          "scale": {"scheme": "greenblue"},
+          "title": "% Tertiary Education",
+          "scale": {
+            "scheme": "greenblue",
+            "domain": [0, 60]   
+          },
           "legend": {
-            "gradientLength": 300,       
+            "gradientLength": 300,
             "titleAlign": "center",
             "titleAnchor": "middle",
             "titleFontSize": 15,
-            "labelFontSize": 14  
+            "labelFontSize": 14
           }
-        },
+        }
+,
         "tooltip": [
-          {"field": "properties.name_en", "title": "State"},
-          {"field": "Tertiary_Percentage", "title": "Population of Tertiary Education (%)", "format": ".2f"}
+          {
+            "field": "percentage_display",
+            "title": "Tertiary Education Rate (%)",
+            "format": ".2f"
+          },
+          {"field": "u_rate", "title": "Unemployment Rate (%)", "format": ".2f"},
+          {"field": "p_rate", "title": "Participation Rate (%)", "format": ".2f"}
         ]
       }
     },
+
     {
       "data": {
         "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
@@ -84,21 +114,47 @@
         "latitude2": {"field": "Latitude2"}
       }
     },
+
     {
       "data": {
-        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
+        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
       },
-      "mark": {
-        "type": "text",
-        "fontSize": 12,
-        "color": "black",
-        "dy": 10
-      },
-      "encoding": {
-        "longitude": {"field": "Longitude2"},
-        "latitude": {"field": "Latitude2"},
-        "text": {"field": "State"}
-      }
+      "transform": [
+        {"filter": "datum.education_level == 'Tertiary'"},
+        {"filter": "toNumber(datum.year) == year_select"},
+        {
+          "window": [{"op": "rank", "as": "rank"}],
+          "sort": [{"field": "percentage", "order": "descending"}]
+        },
+        {"calculate": "datum.rank == 1", "as": "isTop"},
+        {
+          "lookup": "state",
+          "from": {
+            "data": {
+              "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
+            },
+            "key": "State",
+            "fields": ["Longitude2", "Latitude2"]
+          },
+          "as": ["Longitude2", "Latitude2"]
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "text",
+            "dy": 10,
+            "fontSize": 11,
+            "color": "black",
+            "fontWeight": "normal"
+          },
+          "encoding": {
+            "longitude": {"field": "Longitude2"},
+            "latitude": {"field": "Latitude2"},
+            "text": {"field": "state"}
+          }
+        }
+      ]
     }
   ]
 }
