@@ -4,8 +4,8 @@
     "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
   },
 
-  "width": 880,
-  "height": 410,
+  "width": 700,
+  "height": 450,
   "params": [
     {
       "name": "year_select",

@@ -1,12 +1,12 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": 920,
+  "width": 700,
   "height": 450,
   "autosize": {"type": "fit"},
   "projection": {
     "type": "mercator",
-    "center": [107.6, 4.2105],
-    "scale": 2510,
+    "center": [110.8, 4.2105],
+    "scale": 1950,
     "translate": [395, 170]
   },
 
@@ -94,20 +94,6 @@
 
     {
       "data": {
-        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
-      },
-      "transform": [{"filter": "datum.State != 'Kedah'"}],
-      "mark": {"type": "rule", "color": "grey", "strokeWidth": 1},
-      "encoding": {
-        "longitude": {"field": "Longitude"},
-        "latitude": {"field": "Latitude"},
-        "longitude2": {"field": "Longitude2"},
-        "latitude2": {"field": "Latitude2"}
-      }
-    },
-
-    {
-      "data": {
         "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
       },
       "transform": [
@@ -136,24 +122,9 @@
           "mark": {
             "type": "text",
             "dy": 10,
-            "fontSize": 11,
-            "color": "red",
-            "fontWeight": "bold"
-          },
-          "encoding": {
-            "longitude": {"field": "Longitude2"},
-            "latitude": {"field": "Latitude2"},
-            "text": {"field": "state"}
-          }
-        },
-        {
-          "transform": [{"filter": "datum.isTop == false"}],
-          "mark": {
-            "type": "text",
-            "dy": 10,
-            "fontSize": 11,
+            "fontSize": 0,
             "color": "black",
-            "fontWeight": "normal"
+            "fontWeight": "bold"
           },
           "encoding": {
             "longitude": {"field": "Longitude2"},

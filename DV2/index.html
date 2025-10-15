@@ -13,13 +13,13 @@
   <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
-
+  <div class="page-wrapper">
 <body>
   <!-- ===== HEADER ===== -->
   <header>
     <h1>Malaysian Education & Labour Dashboard (2011–2021)</h1>
     <p>Explore how education, participation, and unemployment evolve across states, genders, and time, <br>
-      revealing key trends in human capital growth and regional labour dynamics that shape Malaysia’s socioeconomic development.</p>
+      revealing key trends in human capital growth and regional labour dynamics that shape Malaysia’s development.</p>
   </header>
 
 
@@ -40,12 +40,11 @@
   <main id="story">
     <!-- Chart 1 -->
     <section class="story-block">
-      <h2>Tertiary Education Coverage Percentage by State</h2>
+      <h2>Tertiary Education Coverage Percentage by States</h2>
       <div class="chart-text-container">
         <div id="chart1" class="chart"></div>
         <div class="desc">
           <p>
-            The choropleth map illustrates how tertiary education coverage varies across Malaysian states. <br>
             <strong>West Malaysia</strong> consistently records higher tertiary enrolment rates, especially in
             <strong>Selangor</strong> and <strong>Kuala Lumpur</strong>, due to the concentration of major universities
             and better access to education infrastructure.
@@ -64,7 +63,6 @@
         <div id="chart2" class="chart"></div>
         <div class="desc">
           <p>
-        Overall, tertiary education levels have shown a steady upward trend <strong>across all Malaysian states</strong>. <br>
         Unemployment rates vary slightly between states, with some experiencing <strong>minor increases in 2020</strong> during the pandemic period, 
         while others remained stable or showed small improvements. 
         This indicates Malaysia’s <strong>continued investment in human capital development</strong> 
@@ -77,12 +75,11 @@
 
     <!-- Chart 3 -->
     <section class="story-block">
-      <h2>Gap Analysis between Tertiary Education and Unemployment Rate by State</h2>
+      <h2>Education–Unemployment Gap by State</h2>
       <div class="chart-text-container">
         <div id="chart3" class="chart"></div>
         <div class="desc">
         <p>
-        The dumbbell chart highlights <strong>regional disparities in education-to-employment alignment</strong> across Malaysian states and the need for diversified job creation in highly educated regions. <br>
         <strong>Putrajaya</strong> consistently records the largest gap, reflecting its highly educated workforce but limited private-sector opportunities due to its administrative focus. 
         In contrast, states such as <strong>Kelantan</strong> and <strong>Sabah</strong> show narrower gaps, suggesting a slower pace of educational expansion but more balanced labour absorption.
         </p>
@@ -98,7 +95,6 @@
         <div id="chart4" class="chart"></div>
         <div class="desc">
         <p>
-        The donut chart shows the education composition across Malaysian states, comparing the proportion of individuals with primary, secondary, and tertiary education levels. 
         Across all states, <strong>secondary and tertiary education</strong> make up the majority of the population, with <strong>non-educated groups remaining minimal</strong> — except in <strong>Sabah</strong>, which records a slightly higher share of individuals without formal education. 
         Over the years, <strong>tertiary education levels have steadily increased</strong> in most states, reflecting the nation’s growing focus on higher education accessibility and long-term human capital development.
         </p>
@@ -109,13 +105,11 @@
 
     <!-- Chart 5 -->
     <section class="story-block">
-      <h2>Gender Comparison between Participation and Unemployment Rates across States</h2>
+      <h2>Participation & Unemployment by Gender and State</h2>
       <div class="chart-text-container">
         <div id="chart5" class="chart"></div>
         <div class="desc">
         <p>
-        The butterfly chart shows the comparison between <strong>male and female participation</strong> 
-        and <strong>unemployment rates</strong> across Malaysian states over time. 
         While male participation remains consistently higher, female participation has shown steady improvement across most states, 
         especially in urban regions such as <strong>Kuala Lumpur</strong> and <strong>Selangor</strong>. 
         Unemployment rates between genders remain relatively close, with minor fluctuations across the years, 
@@ -132,10 +126,7 @@
       <div class="chart-text-container">
         <div id="chart6" class="chart"></div>
         <div class="desc">
-        <p>
-        The lollipop chart presents an <strong>overall performance index</strong> that combines key indicators,
-        including <strong>tertiary education attainment</strong> and <strong>unemployment rate</strong> — to measure each state’s 
-        relative progress over time. The index is computed by normalizing and averaging education and unemployment rate to reflect balanced socio-economic outcomes. 
+        <p> The index is computed by normalizing and averaging education and unemployment rate to reflect balanced socio-economic outcomes. 
         <strong>Putrajaya</strong> consistently leads, driven by its highly educated population and minimal unemployment.
         In contrast, states such as <strong>Sabah</strong> and <strong>Melaka</strong> rank lower, 
         indicating the need for stronger education–employment alignment and labour opportunities.
@@ -248,12 +239,7 @@
 
     sections.forEach(sec => observer.observe(sec));
   </script>
-
-  <!-- Inline smooth scroll fix -->
-  <style>
-    html { scroll-behavior: smooth; }
-    .story-block { scroll-margin-top: 120px; }
-  </style>
+</div>
 
 </body>
 </html>
