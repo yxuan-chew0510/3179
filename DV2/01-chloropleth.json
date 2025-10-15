@@ -1,0 +1,167 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 920,
+  "height": 450,
+  "autosize": {"type": "fit"},
+  "projection": {
+    "type": "mercator",
+    "center": [107.6, 4.2105],
+    "scale": 2510,
+    "translate": [395, 170]
+  },
+
+  "params": [
+    {
+      "name": "year_select",
+      "value": 2021,
+        "bind": {
+          "input": "range",
+          "min": 2011,
+          "max": 2021,
+          "step": 1,
+          "name": "Select Year: "
+        }
+    }
+  ],
+
+  "layer": [
+    {
+      "data": {"sphere": true},
+      "mark": {"type": "geoshape", "fill": "#ecf6ff"}
+    },
+
+    {
+      "data": {"graticule": {"step": [2, 2]}},
+      "mark": {
+        "type": "geoshape",
+        "stroke": "lightgrey",
+        "strokeWidth": 0.8,
+        "opacity": 0.8
+      }
+    },
+
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
+      },
+      "transform": [
+        {"filter": "datum.education_level == 'Tertiary'"},
+        {"filter": "toNumber(datum.year) == year_select"},
+        {
+          "lookup": "state",
+          "from": {
+            "data": {
+              "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/malaysia_states.json",
+              "format": {"type": "topojson", "feature": "malaysia_states"}
+            },
+            "key": "properties.name_en"
+          },
+          "as": "geo"
+        },
+        {
+          "calculate": "datum.percentage * 100",
+          "as": "percentage_display"
+        }
+      ],
+      "mark": {"type": "geoshape", "stroke": "dimgrey"},
+      "encoding": {
+        "shape": {"field": "geo", "type": "geojson"},
+        "color": {
+          "field": "percentage_display",
+          "type": "quantitative",
+          "title": "% Tertiary Education",
+          "scale": {"scheme": "greenblue"},
+          "legend": {
+            "gradientLength": 300,
+            "titleAlign": "center",
+            "titleAnchor": "middle",
+            "titleFontSize": 15,
+            "labelFontSize": 14,
+            "orient": "bottom-right"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "percentage_display",
+            "title": "Tertiary Education Rate (%)",
+            "format": ".2f"
+          },
+          {"field": "u_rate", "title": "Unemployment Rate (%)", "format": ".2f"},
+          {"field": "p_rate", "title": "Participation Rate (%)", "format": ".2f"}
+        ]
+      }
+    },
+
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
+      },
+      "transform": [{"filter": "datum.State != 'Kedah'"}],
+      "mark": {"type": "rule", "color": "grey", "strokeWidth": 1},
+      "encoding": {
+        "longitude": {"field": "Longitude"},
+        "latitude": {"field": "Latitude"},
+        "longitude2": {"field": "Longitude2"},
+        "latitude2": {"field": "Latitude2"}
+      }
+    },
+
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
+      },
+      "transform": [
+        {"filter": "datum.education_level == 'Tertiary'"},
+        {"filter": "toNumber(datum.year) == year_select"},
+        {
+          "window": [{"op": "rank", "as": "rank"}],
+          "sort": [{"field": "percentage", "order": "descending"}]
+        },
+        {"calculate": "datum.rank == 1", "as": "isTop"},
+        {
+          "lookup": "state",
+          "from": {
+            "data": {
+              "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
+            },
+            "key": "State",
+            "fields": ["Longitude2", "Latitude2"]
+          },
+          "as": ["Longitude2", "Latitude2"]
+        }
+      ],
+      "layer": [
+        {
+          "transform": [{"filter": "datum.isTop == true"}],
+          "mark": {
+            "type": "text",
+            "dy": 10,
+            "fontSize": 11,
+            "color": "red",
+            "fontWeight": "bold"
+          },
+          "encoding": {
+            "longitude": {"field": "Longitude2"},
+            "latitude": {"field": "Latitude2"},
+            "text": {"field": "state"}
+          }
+        },
+        {
+          "transform": [{"filter": "datum.isTop == false"}],
+          "mark": {
+            "type": "text",
+            "dy": 10,
+            "fontSize": 11,
+            "color": "black",
+            "fontWeight": "normal"
+          },
+          "encoding": {
+            "longitude": {"field": "Longitude2"},
+            "latitude": {"field": "Latitude2"},
+            "text": {"field": "state"}
+          }
+        }
+      ]
+    }
+  ]
+}

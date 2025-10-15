@@ -1,0 +1,99 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 880,
+  "height": 420,
+
+  "data": {
+    "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
+  },
+
+  "params": [
+    {
+      "name": "year_select",
+      "value": 2021,
+        "bind": {
+          "input": "range",
+          "min": 2011,
+          "max": 2021,
+          "step": 1,
+          "name": "Select Year: "
+        }
+    }
+  ],
+
+  "transform": [
+    {"calculate": "toNumber(datum.year)", "as": "year_num"},
+    {"filter": "datum.year_num == year_select"},
+    {"filter": "lower(datum.education_level) == 'tertiary'"},
+    {
+      "calculate": "toNumber(datum.percentage) <= 1 ? toNumber(datum.percentage)*100 : toNumber(datum.percentage)",
+      "as": "edu_pct"
+    },
+    {"calculate": "toNumber(datum.p_rate)", "as": "p_rate"},
+    {"calculate": "toNumber(datum.u_rate)", "as": "u_rate"},
+    {
+      "calculate": "(datum.edu_pct + datum.p_rate + (100 - datum.u_rate)) / 3",
+      "as": "overall_score"
+    },
+    {
+      "aggregate": [{"op": "mean", "field": "overall_score", "as": "score"}],
+      "groupby": ["state"]
+    },
+    {
+      "calculate": "datum.score > 80 ? 'High' : datum.score > 65 ? 'Medium' : 'Low'",
+      "as": "tier"
+    }
+  ],
+
+  "layer": [
+    {
+      "mark": {"type": "rule", "color": "#dcdcdc"},
+      "encoding": {
+        "x": {"field": "score", "type": "quantitative"},
+        "y": {
+          "field": "state",
+          "type": "nominal",
+          "sort": "-x",
+          "title": "State"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 100,
+        "stroke": "white",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "y": {
+          "field": "state",
+          "type": "nominal",
+          "sort": "-x",
+          "title": "State"
+        },
+        "x": {
+          "field": "score",
+          "type": "quantitative",
+          "title": "Overall Score (%)",
+          "scale": {"domain": [50, 95]}
+        },
+        "color": {
+          "field": "tier",
+          "type": "nominal",
+          "scale": {
+            "domain": ["High", "Medium", "Low"],
+            "range": ["#1f77b4", "#ff7f0e", "#d62728"]
+          },
+          "legend": {"title": "Performance Tier"}
+        },
+        "tooltip": [
+          {"field": "state", "title": "State"},
+          {"field": "score", "title": "Overall Score", "format": ".1f"},
+          {"field": "tier", "title": "Tier"}
+        ]
+      }
+    }
+  ]
+}

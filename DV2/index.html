@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Education & Labour Dashboard (Malaysia)</title>
+
+  <!-- Vega Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- ===== HEADER ===== -->
+  <header>
+    <h1>Malaysian Education & Labour Dashboard (2011–2021)</h1>
+    <p>Explore how education, participation, and unemployment evolve across states, genders, and time, <br>
+      revealing key trends in human capital growth and regional labour dynamics that shape Malaysia’s socioeconomic development.</p>
+  </header>
+
+
+  <div id="slider-row">
+    <p class="instruction">
+      Use the slider to explore how the states evolved from <strong>2011</strong> to <strong>2021</strong>.
+    </p>
+
+    <div id="controls">
+      <label for="year_select"><strong>Select Year:</strong></label>
+      <input type="range" id="year_select" min="2011" max="2021" value="2021" step="1" />
+      <span id="year_label">2021</span>
+    </div>
+  </div>
+</section>
+
+  <!-- ===== STORY SECTION ===== -->
+  <main id="story">
+    <!-- Chart 1 -->
+    <section class="story-block">
+      <h2>Tertiary Education Coverage Percentage by State</h2>
+      <div class="chart-text-container">
+        <div id="chart1" class="chart"></div>
+        <div class="desc">
+          <p>
+            The choropleth map illustrates how tertiary education coverage varies across Malaysian states. <br>
+            <strong>West Malaysia</strong> consistently records higher tertiary enrolment rates, especially in
+            <strong>Selangor</strong> and <strong>Kuala Lumpur</strong>, due to the concentration of major universities
+            and better access to education infrastructure.
+            In contrast, <strong>Kelantan</strong> and <strong>Terengganu</strong> record lower coverage,
+            reflecting persistent regional disparities between East and West Malaysia.
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Chart 2 -->
+    <section class="story-block">
+    <h2>Tertiary Education and Unemployment Rate Over Time by States</h2>
+      <div class="chart-text-container">
+        <div id="chart2" class="chart"></div>
+        <div class="desc">
+          <p>
+        Overall, tertiary education levels have shown a steady upward trend <strong>across all Malaysian states</strong>. <br>
+        Unemployment rates vary slightly between states, with some experiencing <strong>minor increases in 2020</strong> during the pandemic period, 
+        while others remained stable or showed small improvements. 
+        This indicates Malaysia’s <strong>continued investment in human capital development</strong> 
+        and a <strong>strong education system</strong> that sustains long-term growth despite short-term economic challenges.
+        </p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Chart 3 -->
+    <section class="story-block">
+      <h2>Gap Analysis between Tertiary Education and Unemployment Rate by State</h2>
+      <div class="chart-text-container">
+        <div id="chart3" class="chart"></div>
+        <div class="desc">
+        <p>
+        The dumbbell chart highlights <strong>regional disparities in education-to-employment alignment</strong> across Malaysian states and the need for diversified job creation in highly educated regions. <br>
+        <strong>Putrajaya</strong> consistently records the largest gap, reflecting its highly educated workforce but limited private-sector opportunities due to its administrative focus. 
+        In contrast, states such as <strong>Kelantan</strong> and <strong>Sabah</strong> show narrower gaps, suggesting a slower pace of educational expansion but more balanced labour absorption.
+        </p>
+        </div>
+      </div>
+    </section>
+    
+
+    <!-- Chart 4 -->
+    <section class="story-block">
+      <h2>Comparison of Education Composition Between Selected States</h2>
+      <div class="chart-text-container">
+        <div id="chart4" class="chart"></div>
+        <div class="desc">
+        <p>
+        The donut chart shows the education composition across Malaysian states, comparing the proportion of individuals with primary, secondary, and tertiary education levels. 
+        Across all states, <strong>secondary and tertiary education</strong> make up the majority of the population, with <strong>non-educated groups remaining minimal</strong> — except in <strong>Sabah</strong>, which records a slightly higher share of individuals without formal education. 
+        Over the years, <strong>tertiary education levels have steadily increased</strong> in most states, reflecting the nation’s growing focus on higher education accessibility and long-term human capital development.
+        </p>
+        </div>
+      </div>
+    </section>
+    
+
+    <!-- Chart 5 -->
+    <section class="story-block">
+      <h2>Gender Comparison between Participation and Unemployment Rates across States</h2>
+      <div class="chart-text-container">
+        <div id="chart5" class="chart"></div>
+        <div class="desc">
+        <p>
+        The butterfly chart shows the comparison between <strong>male and female participation</strong> 
+        and <strong>unemployment rates</strong> across Malaysian states over time. 
+        While male participation remains consistently higher, female participation has shown steady improvement across most states, 
+        especially in urban regions such as <strong>Kuala Lumpur</strong> and <strong>Selangor</strong>. 
+        Unemployment rates between genders remain relatively close, with minor fluctuations across the years, 
+        indicating gradual progress towards a more balanced labour market.
+        </p>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Chart 6 -->
+    <section class="story-block">
+      <h2>Overall State Performance Index across Time</h2>
+      <div class="chart-text-container">
+        <div id="chart6" class="chart"></div>
+        <div class="desc">
+        <p>
+        The lollipop chart presents an <strong>overall performance index</strong> that combines key indicators,
+        including <strong>tertiary education attainment</strong> and <strong>unemployment rate</strong> — to measure each state’s 
+        relative progress over time. The index is computed by normalizing and averaging education and unemployment rate to reflect balanced socio-economic outcomes. 
+        <strong>Putrajaya</strong> consistently leads, driven by its highly educated population and minimal unemployment.
+        In contrast, states such as <strong>Sabah</strong> and <strong>Melaka</strong> rank lower, 
+        indicating the need for stronger education–employment alignment and labour opportunities.
+        </p>
+        </div>
+      </div>
+    </section>
+
+  <!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <p><strong>Author:</strong><br>Chew Yang Xuan</p>
+  <p><strong>Date:</strong><br>15/10/2025</p>
+  <p><strong>Data Sources:</strong><br>
+   (a) <a href="https://archive.data.gov.my/data/ms_MY/dataset/labour-force-by-state-and-educational-attainment" target="_blank">
+   DataGov: Labour Force by State and Educational Attainment 
+  </a><br>
+  (b) <a href="https://open.dosm.gov.my/data-catalogue/lfs_state_sex" target="_blank">
+      OpenDOSM: Labour Force by State and Sex
+    </a>
+  </p>
+</footer>
+
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+        // Chart configuration
+    const charts = [
+      { id: "chart1", spec: "01-chloropleth.json" },
+      { id: "chart2", spec: "02-line.json" },
+      { id: "chart3", spec: "03-dumbell.json" },
+      { id: "chart4", spec: "04-donut.json" },
+      { id: "chart5", spec: "05-butterfly.json" },
+      { id: "chart6", spec: "06-lollipop.json" }
+    ];
+
+    const chartViews = {};
+    let currentYear = 2021;
+    const slider = document.getElementById("year_select");
+    const label = document.getElementById("year_label");
+
+    // Render all charts initially
+    async function renderCharts(year) {
+      for (const c of charts) {
+        const view = await vegaEmbed(`#${c.id}`, c.spec, {
+          actions: false,
+          renderer: "canvas",
+          config: { autosize: { type: "fit", contains: "padding" } },
+          params: [{ name: "year_select", value: year }]
+        }).then(res => res.view);
+
+        chartViews[c.id] = view;
+      }
+    }
+
+    renderCharts(currentYear);
+
+    // Sync slider across all charts in real-time
+    slider.addEventListener("input", e => {
+      currentYear = +e.target.value;
+      label.textContent = currentYear;
+
+      for (const id in chartViews) {
+        try {
+          chartViews[id].signal("year_select", currentYear).runAsync();
+        } catch {
+          // fallback re-render
+          const chartDef = charts.find(c => c.id === id);
+          vegaEmbed(`#${id}`, chartDef.spec, {
+            actions: false,
+            renderer: "canvas",
+            config: { autosize: { type: "fit", contains: "padding" } },
+            params: [{ name: "year_select", value: currentYear }]
+          });
+        }
+      }
+    });
+
+    // Smooth scroll for navigation buttons
+    document.querySelectorAll(".toc-row .toc").forEach(button => {
+      button.addEventListener("click", () => {
+        const targetId = button.getAttribute("data-target");
+        const el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    // Scroll reveal animation
+    ScrollReveal().reveal(".story-block", {
+      duration: 1000,
+      distance: "30px",
+      origin: "bottom",
+      easing: "ease-in-out",
+      interval: 200
+    });
+
+    // Active highlight tracking
+    const sections = document.querySelectorAll(".story-block");
+    const buttons = document.querySelectorAll(".toc-row button");
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          buttons.forEach(btn => btn.classList.remove("active"));
+          const id = entry.target.querySelector(".chart").id;
+          const activeBtn = Array.from(buttons).find(btn => btn.dataset.target === id);
+          if (activeBtn) activeBtn.classList.add("active");
+        }
+      });
+    }, { threshold: 0.5 });
+
+    sections.forEach(sec => observer.observe(sec));
+  </script>
+
+  <!-- Inline smooth scroll fix -->
+  <style>
+    html { scroll-behavior: smooth; }
+    .story-block { scroll-margin-top: 120px; }
+  </style>
+
+</body>
+</html>

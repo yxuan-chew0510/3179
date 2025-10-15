@@ -1,0 +1,88 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+
+  "data": {
+    "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/lfs_state_sex.csv",
+    "format": {"type": "csv"}
+  },
+  "params": [
+    {
+      "name": "year_select",
+      "value": 2021,
+        "bind": {
+          "input": "range",
+          "min": 2011,
+          "max": 2021,
+          "step": 1,
+          "name": "Select Year: "
+        }
+    }
+  ],
+
+  "transform": [
+    {"calculate": "lower(trim(datum.sex))", "as": "sex_l"},
+    {"filter": "datum.sex_l == 'male' || datum.sex_l == 'female'"},
+    {"calculate": "toNumber(substring(toString(datum.date),0,4))", "as": "year"},
+    {"filter": "datum.year == year_select"},
+    {"fold": ["p_rate", "u_rate"], "as": ["indicator", "value"]},
+    {
+      "calculate": "datum.sex_l == 'female' ? -toNumber(datum.value) : toNumber(datum.value)",
+      "as": "display_value"
+    },
+    {
+      "calculate": "datum.indicator == 'p_rate' ? 'Participation Rate (%)' : 'Unemployment Rate (%)'",
+      "as": "IndicatorLabel"
+    }
+  ],
+
+  "facet": {
+    "field": "IndicatorLabel",
+    "type": "nominal",
+    "columns": 2,
+    "title": null
+  },
+
+  "spec": {
+    "width": 370,
+    "height": 380,
+    "layer": [
+      {
+        "mark": {"type": "bar", "tooltip": true},
+        "encoding": {
+          "y": {
+            "field": "state",
+            "type": "nominal",
+            "title": "State",
+            "sort": "-x"
+          },
+          "x": {
+            "field": "display_value",
+            "type": "quantitative",
+            "title": "% (Male →, Female ←)"
+          },
+          "color": {
+            "field": "sex_l",
+            "type": "nominal",
+            "scale": {
+              "domain": ["male", "female"],
+              "range": ["#1f77b4", "#d62728"]
+            },
+            "legend": {"title": "Gender"}
+          },
+          "tooltip": [
+            {"field": "state", "title": "State"},
+            {"field": "sex_l", "title": "Gender"},
+            {"field": "indicator", "title": "Metric"},
+            {"field": "value", "title": "Value (%)", "format": ".1f"}
+          ]
+        }
+      },
+      {
+        "mark": {"type": "rule", "color": "black"},
+        "encoding": {"x": {"value": 0}}
+      }
+    ]
+  },
+
+  "resolve": { "scale": { "x": "independent" } }
+}

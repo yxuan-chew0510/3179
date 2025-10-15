@@ -1,0 +1,140 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
+  },
+
+  "width": 880,
+  "height": 410,
+  "params": [
+    {
+      "name": "year_select",
+      "value": 2021,
+      "bind": {
+        "input": "range",
+        "min": 2011,
+        "max": 2021,
+        "step": 1,
+        "name": "Select Year: "
+      }
+    },
+    {
+      "name": "state_select_left",
+      "value": "Selangor",
+      "bind": {
+        "input": "select",
+        "options": [
+          "Johor","Kedah","Kelantan","Melaka","Negeri Sembilan","Pahang",
+          "Penang","Perak","Perlis","Sabah","Sarawak","Selangor",
+          "Terengganu","Kuala Lumpur","Putrajaya","Labuan"
+        ],
+        "name": "Left State: "
+      }
+    },
+    {
+      "name": "state_select_right",
+      "value": "Kuala Lumpur",
+      "bind": {
+        "input": "select",
+        "options": [
+          "Johor","Kedah","Kelantan","Melaka","Negeri Sembilan","Pahang",
+          "Penang","Perak","Perlis","Sabah","Sarawak","Selangor",
+          "Terengganu","Kuala Lumpur","Putrajaya","Labuan"
+        ],
+        "name": "Right State: "
+      }
+    }
+  ],
+
+  "vconcat": [
+    {
+      "hconcat": [
+        {
+          "width": 300,
+          "height": 300,
+          "title": {"text": {"expr": "state_select_left"}, "anchor": "middle"},
+          "transform": [
+            {"calculate": "toNumber(datum.year)", "as": "year_num"},
+            {"filter": "datum.year_num == year_select"},
+            {"calculate": "trim(datum.state)", "as": "state_trim"},
+            {"filter": "datum.state_trim == state_select_left"},
+            {
+              "calculate": "toNumber(datum.percentage) <= 1 ? toNumber(datum.percentage)*100 : toNumber(datum.percentage)",
+              "as": "pct"
+            },
+            {
+              "aggregate": [{"op": "mean", "field": "pct", "as": "mean_pct"}],
+              "groupby": ["education_level"]
+            }
+          ],
+          "mark": {"type": "arc", "innerRadius": 70, "outerRadius": 120},
+          "encoding": {
+            "theta": {"field": "mean_pct", "type": "quantitative"},
+            "color": {
+              "field": "education_level",
+              "type": "nominal",
+              "scale": {
+                "domain": ["No Formal Education", "Primary", "Secondary", "Tertiary"],
+                "range": ["#E8F5E9", "#A5D6A7", "#66BB6A", "#2E7D32"]
+              },
+              "legend": {
+                "title": "Education Level",
+                "orient": "bottom",
+                "labelFontSize": 12,
+                "titleFontSize": 13
+              }
+            },
+            "tooltip": [
+              {"field": "education_level", "title": "Level"},
+              {"field": "mean_pct", "title": "Share (%)", "format": ".1f"}
+            ]
+          }
+        },
+        {
+          "width": 300,
+          "height": 300,
+          "title": {"text": {"expr": "state_select_right"}, "anchor": "middle"},
+          "transform": [
+            {"calculate": "toNumber(datum.year)", "as": "year_num"},
+            {"filter": "datum.year_num == year_select"},
+            {"calculate": "trim(datum.state)", "as": "state_trim"},
+            {"filter": "datum.state_trim == state_select_right"},
+            {
+              "calculate": "toNumber(datum.percentage) <= 1 ? toNumber(datum.percentage)*100 : toNumber(datum.percentage)",
+              "as": "pct"
+            },
+            {
+              "aggregate": [{"op": "mean", "field": "pct", "as": "mean_pct"}],
+              "groupby": ["education_level"]
+            }
+          ],
+          "mark": {"type": "arc", "innerRadius": 70, "outerRadius": 120},
+          "encoding": {
+            "theta": {"field": "mean_pct", "type": "quantitative"},
+            "color": {
+              "field": "education_level",
+              "type": "nominal",
+              "scale": {
+                "domain": ["No Formal Education", "Primary", "Secondary", "Tertiary"],
+                "range": ["#E8F5E9", "#A5D6A7", "#66BB6A", "#2E7D32"]
+              },
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "education_level", "title": "Level"},
+              {"field": "mean_pct", "title": "Share (%)", "format": ".1f"}
+            ]
+          }
+        }
+      ]
+    }
+  ],
+
+  "config": {
+    "view": {"stroke": null},
+    "legend": {
+      "orient":"right",
+      "title": "Education Level"
+    }
+  }
+}

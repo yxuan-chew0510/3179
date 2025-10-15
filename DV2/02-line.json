@@ -1,0 +1,139 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "usermeta": {
+    "embedOptions": {
+      "style": {
+        ".vega-bindings": {
+          "display": "flex",
+          "justify-content": "flex-end",
+          "margin-bottom": "10px",
+          "font-family": "Source Sans Pro, sans-serif",
+          "font-size": "13px"
+        }
+      }
+    }
+  },
+
+  "width": 880,
+  "height": 420,
+  "data": {
+    "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
+  },
+
+  "params": [
+    {
+      "name": "state_select",
+      "bind": {
+        "input": "select",
+        "name": "State: ",
+        "options": [
+          "Johor","Kedah","Kelantan","Melaka","Negeri Sembilan","Pahang",
+          "Penang","Perak","Perlis","Sabah","Sarawak","Selangor",
+          "Terengganu","Kuala Lumpur","Putrajaya","Labuan"
+        ]
+      },
+      "value": "Selangor"
+    },
+    {
+      "name": "year_select",
+      "value": 2021
+    }
+  ],
+
+  "transform": [
+    {"filter": "lower(datum.education_level) == 'tertiary'"},
+    {"filter": "datum.state == state_select"},
+    {"calculate": "toNumber(datum.year)", "as": "YearNum"},
+    {"filter": "datum.YearNum >= 2011"},
+    {"calculate": "toNumber(datum.percentage) * 100", "as": "edu_pct"},
+    {"calculate": "toNumber(datum.u_rate)", "as": "unemp_pct"},
+    {
+      "fold": ["edu_pct", "unemp_pct"],
+      "as": ["IndicatorKey", "value"]
+    },
+    {
+      "calculate": "datum.IndicatorKey == 'edu_pct' ? 'Tertiary Education (%)' : 'Unemployment Rate (%)'",
+      "as": "Indicator"
+    }
+  ],
+
+  "layer": [
+    {
+      "mark": {"type": "line", "point": true, "strokeWidth": 2},
+      "encoding": {
+        "x": {"field": "YearNum", "type": "quantitative", "title": "Year"},
+        "y": {"field": "value", "type": "quantitative", "title": "Percentage (%)"},
+        "color": {
+          "field": "Indicator",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Tertiary Education (%)", "Unemployment Rate (%)"],
+            "range": ["#1f77b4", "#d62728"]
+          },
+          "legend": {"title": null}
+        },
+        "tooltip": [
+          {"field": "state", "title": "State"},
+          {"field": "YearNum", "title": "Year"},
+          {"field": "Indicator", "title": "Indicator"},
+          {"field": "value", "title": "Value (%)", "format": ".2f"}
+        ]
+      }
+    },
+{
+  "transform": [
+    {"filter": "datum.Indicator == 'Tertiary Education (%)'"},
+    {"window": [{"op": "lag", "field": "value", "as": "prev_value"}], "sort": [{"field": "YearNum"}]},
+    {"calculate": "datum.value - datum.prev_value", "as": "diff"},
+    {"calculate": "abs(datum.diff)", "as": "abs_diff"},
+    {"window": [{"op": "rank", "as": "rank"}], "sort": [{"field": "abs_diff", "order": "descending"}]},
+    {"filter": "datum.rank == 1"},
+    {
+      "calculate": "datum.diff > 0 ? datum.YearNum - 1 + '-' + datum.YearNum + ': Largest Rise (' + format(datum.diff, '+.1f') + '%)' : datum.YearNum - 1 + '-' + datum.YearNum + ': Largest Drop (' + format(datum.diff, '+.1f') + '%)'",
+      "as": "label"
+    }
+  ],
+  "mark": {
+    "type": "text",
+    "fontWeight": "bold",
+    "fontSize": 13,
+    "align": "left",
+    "baseline": "top",
+    "x": 20,         
+    "y": 10,
+    "dx": -10,
+    "color": {"expr": "datum.diff > 0 ? '#2E8B57' : '#d62728'"}
+  },
+  "encoding": {
+    "text": {"field": "label"}
+  }
+}
+
+
+,
+    {
+      "name": "HighlightLine",
+      "mark": {"type": "rule", "color": "#004aad", "strokeWidth": 2},
+      "encoding": {"x": {"expr": "year_select"}}
+    },
+    {
+      "mark": {"type": "rule", "color": "gray", "strokeDash": [4, 4]},
+      "encoding": {"x": {"datum": 2020}}
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "bottom",
+        "dx": 6,
+        "dy": -6,
+        "fontSize": 12,
+        "color": "gray"
+      },
+      "encoding": {
+        "x": {"datum": 2020},
+        "y": {"value": 95},
+        "text": {"value": "Pandemic (2020)"}
+      }
+    }
+  ]}
