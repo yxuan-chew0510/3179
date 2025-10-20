@@ -6,23 +6,9 @@
     "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
   },
 
-  "params": [
-    {
-      "name": "year_select",
-      "value": 2021,
-        "bind": {
-          "input": "range",
-          "min": 2011,
-          "max": 2021,
-          "step": 1,
-          "name": "Select Year: "
-        }
-    }
-  ],
-
   "transform": [
     {"calculate": "toNumber(datum.year)", "as": "year_num"},
-    {"filter": "datum.year_num == year_select"},
+    {"filter": "datum.year_num == 2021"},
     {"filter": "lower(datum.education_level) == 'tertiary'"},
     {
       "calculate": "toNumber(datum.percentage) <= 1 ? toNumber(datum.percentage)*100 : toNumber(datum.percentage)",

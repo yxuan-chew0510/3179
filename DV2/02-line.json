@@ -15,7 +15,7 @@
   },
 
   "width": 700,
-  "height": 450,
+  "height": 400,
   "data": {
     "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
   },
@@ -70,7 +70,7 @@
             "domain": ["Tertiary Education (%)", "Unemployment Rate (%)"],
             "range": ["#1f77b4", "#d62728"]
           },
-          "legend": {"title": null}
+          "legend": {"title": "Metric", "orient": "bottom" }
         },
         "tooltip": [
           {"field": "state", "title": "State"},
@@ -83,13 +83,21 @@
 {
   "transform": [
     {"filter": "datum.Indicator == 'Tertiary Education (%)'"},
-    {"window": [{"op": "lag", "field": "value", "as": "prev_value"}], "sort": [{"field": "YearNum"}]},
+    {"sort": [{"field": "YearNum"}]},
+    {
+      "window": [
+        {"op": "lag", "field": "value", "as": "prev_value"},
+        {"op": "lag", "field": "YearNum", "as": "prev_year"}
+      ]
+    },
+    {"filter": "isValid(datum.prev_value)"},
     {"calculate": "datum.value - datum.prev_value", "as": "diff"},
+    {"filter": "datum.diff > 0"},
     {"calculate": "abs(datum.diff)", "as": "abs_diff"},
     {"window": [{"op": "rank", "as": "rank"}], "sort": [{"field": "abs_diff", "order": "descending"}]},
     {"filter": "datum.rank == 1"},
     {
-      "calculate": "datum.diff > 0 ? datum.YearNum - 1 + '-' + datum.YearNum + ': Largest Rise (' + format(datum.diff, '+.1f') + '%)' : datum.YearNum - 1 + '-' + datum.YearNum + ': Largest Drop (' + format(datum.diff, '+.1f') + '%)'",
+      "calculate": "datum.prev_year + '-' + datum.YearNum + ': Largest Rise (' + format(datum.diff, '+.1f') + '%)'",
       "as": "label"
     }
   ],
@@ -99,17 +107,50 @@
     "fontSize": 13,
     "align": "left",
     "baseline": "top",
-    "x": 20,         
+    "x": 15,
     "y": 10,
-    "dx": -10,
-    "color": {"expr": "datum.diff > 0 ? '#2E8B57' : '#d62728'"}
+    "color": "#0d3d77"
+  },
+  "encoding": {
+    "text": {"field": "label"}
+  }
+},
+
+{
+  "transform": [
+    {"filter": "datum.Indicator == 'Tertiary Education (%)'"},
+    {"sort": [{"field": "YearNum"}]},
+    {
+      "window": [
+        {"op": "lag", "field": "value", "as": "prev_value"},
+        {"op": "lag", "field": "YearNum", "as": "prev_year"}
+      ]
+    },
+    {"filter": "isValid(datum.prev_value)"},
+    {"calculate": "datum.value - datum.prev_value", "as": "diff"},
+    {"filter": "datum.diff < 0"},
+    {"calculate": "abs(datum.diff)", "as": "abs_diff"},
+    {"window": [{"op": "rank", "as": "rank"}], "sort": [{"field": "abs_diff", "order": "descending"}]},
+    {"filter": "datum.rank == 1"},
+    {
+      "calculate": "datum.prev_year + '-' + datum.YearNum + ': Largest Drop (' + format(datum.diff, '+.1f') + '%)'",
+      "as": "label"
+    }
+  ],
+  "mark": {
+    "type": "text",
+    "fontWeight": "bold",
+    "fontSize": 13,
+    "align": "left",
+    "baseline": "top",
+    "x": 15,
+    "y": 30,
+    "color": "#2391bd"
   },
   "encoding": {
     "text": {"field": "label"}
   }
 }
-
-
 ,
     {
       "name": "HighlightLine",
@@ -125,7 +166,7 @@
         "type": "text",
         "align": "left",
         "baseline": "bottom",
-        "dx": 6,
+        "dx": -10,
         "dy": -6,
         "fontSize": 12,
         "color": "gray"

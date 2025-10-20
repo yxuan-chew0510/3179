@@ -5,85 +5,43 @@
     "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/lfs_state_sex.csv",
     "format": {"type": "csv"}
   },
-  "params": [
-    {
-      "name": "year_select",
-      "value": 2021,
-        "bind": {
-          "input": "range",
-          "min": 2011,
-          "max": 2021,
-          "step": 1,
-          "name": "Select Year: "
-        }
-    }
-  ],
 
   "transform": [
     {"calculate": "lower(trim(datum.sex))", "as": "sex_l"},
     {"filter": "datum.sex_l == 'male' || datum.sex_l == 'female'"},
     {"calculate": "toNumber(substring(toString(datum.date),0,4))", "as": "year"},
-    {"filter": "datum.year == year_select"},
-    {"fold": ["p_rate", "u_rate"], "as": ["indicator", "value"]},
-    {
-      "calculate": "datum.sex_l == 'female' ? -toNumber(datum.value) : toNumber(datum.value)",
-      "as": "display_value"
-    },
-    {
-      "calculate": "datum.indicator == 'p_rate' ? 'Participation Rate (%)' : 'Unemployment Rate (%)'",
-      "as": "IndicatorLabel"
-    }
+    {"filter": "datum.year >= 2011 && datum.year <= 2021"},
+    {"fold": ["p_rate"], "as": ["indicator", "value"]},
+    {"calculate": "toNumber(datum.value) <= 1 ? toNumber(datum.value)*100 : toNumber(datum.value)", "as": "val_pct"},
+    {"calculate": "datum.sex_l == 'female' ? -datum.val_pct : datum.val_pct", "as": "display_value"}
   ],
 
-  "facet": {
-    "field": "IndicatorLabel",
-    "type": "nominal",
-    "columns": 2,
-    "title": null
-  },
-
-  "spec": {
-
-    "width": 250,
-    "height": 350,
-    "layer": [
-      {
-        "mark": {"type": "bar", "tooltip": true},
-        "encoding": {
-          "y": {
-            "field": "state",
-            "type": "nominal",
-            "title": "State",
-            "sort": "-x"
-          },
-          "x": {
-            "field": "display_value",
-            "type": "quantitative",
-            "title": "% (Male →, Female ←)"
-          },
-          "color": {
-            "field": "sex_l",
-            "type": "nominal",
-            "scale": {
-              "domain": ["male", "female"],
-              "range": ["#1f77b4", "#d62728"]
-            },
-            "legend": {"title": "Gender"}
-          },
-          "tooltip": [
-            {"field": "state", "title": "State"},
-            {"field": "sex_l", "title": "Gender"},
-            {"field": "indicator", "title": "Metric"},
-            {"field": "value", "title": "Value (%)", "format": ".1f"}
-          ]
-        }
-      },
-      {
-        "mark": {"type": "rule", "color": "black"},
-        "encoding": {"x": {"value": 0}}
+  "width": 700,
+  "height": 400,
+  "layer": [
+    {
+      "mark": {"type": "bar", "tooltip": true},
+      "encoding": {
+        "y": {"field": "state", "type": "nominal", "title": "State", "sort": "-x"},
+        "x": {
+          "field": "display_value",
+          "type": "quantitative",
+          "title": "Cumulative Participation Rate (%)"
+        },
+        "color": {
+          "field": "sex_l",
+          "type": "nominal",
+          "scale": {"domain": ["male", "female"], "range": ["#1f77b4", "#E69F00"]},
+          "legend": {"title": "Gender"}
+        },
+        "tooltip": [
+          {"field": "state", "title": "State"},
+          {"field": "year", "title": "Year"},
+          {"field": "sex_l", "title": "Gender"},
+          {"field": "val_pct", "title": "Participation Rate (%)", "format": ".1f"}
+        ]
       }
-    ]
-  },
-
-  "resolve": { "scale": { "x": "independent" } }
+    },
+    {"mark": {"type": "rule", "color": "black"}, "encoding": {"x": {"value": 0}}}
+  ]
 }

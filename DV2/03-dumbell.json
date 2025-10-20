@@ -1,7 +1,7 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "width": 700,
-  "height": 450,
+  "height": 400,
   "data": {
     "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
   },
@@ -9,13 +9,13 @@
     {
       "name": "year_select",
       "value": 2021,
-        "bind": {
-          "input": "range",
-          "min": 2011,
-          "max": 2021,
-          "step": 1,
-          "name": "Select Year: "
-        }
+      "bind": {
+        "input": "range",
+        "min": 2011,
+        "max": 2021,
+        "step": 1,
+        "name": "Select Year: "
+      }
     }
   ],
   "transform": [
@@ -24,6 +24,7 @@
     {"filter": "datum.year_num == year_select"},
     {"calculate": "toNumber(datum.percentage) * 100", "as": "edu_pct"},
     {"calculate": "toNumber(datum.u_rate)", "as": "u_rate_num"},
+    {"calculate": "datum.edu_pct - datum.u_rate_num", "as": "gap"},
     {
       "fold": ["edu_pct", "u_rate_num"],
       "as": ["metric", "value"]
@@ -33,51 +34,67 @@
       "as": "MetricLabel"
     }
   ],
+  "encoding": {
+    "y": {
+      "field": "state",
+      "type": "nominal",
+      "sort": {"field": "gap", "order": "ascending"},
+      "title": "State (sorted by education–unemployment gap)"
+    }
+  },
   "layer": [
     {
       "mark": {"type": "rule", "strokeWidth": 2, "color": "#cccccc"},
       "encoding": {
-        "y": {
-          "field": "state",
-          "type": "nominal",
-          "title": "State",
-          "sort": {"field": "edu_pct", "order": "descending"}
-        },
-        "x": {
-          "aggregate": "min",
-          "field": "value",
-          "type": "quantitative"
-        },
-        "x2": {
-          "aggregate": "max",
-          "field": "value"
-        }
+        "x": {"aggregate": "min", "field": "value", "type": "quantitative"},
+        "x2": {"aggregate": "max", "field": "value"},
+        "y": {"field": "state", "type": "nominal"}
       }
     },
     {
-      "mark": {"type": "point", "filled": true, "size": 120},
+      "mark": {"type": "point", "filled": true, "size": 160, "stroke": "white", "strokeWidth": 0.5},
       "encoding": {
-        "y": {"field": "state", "type": "nominal", "title": null},
         "x": {"field": "value", "type": "quantitative", "title": "Value (%)"},
         "color": {
-        "field": "MetricLabel",
-        "type": "nominal",
-        "scale": {
+          "field": "MetricLabel",
+          "type": "nominal",
+          "scale": {
             "domain": ["Tertiary Education (%)", "Unemployment Rate (%)"],
             "range": ["#1f77b4", "#d62728"]
+          },
+          "legend": {"title": "Metric", "orient": "bottom"}
         },
-        "legend": {
-            "orient": "bottom-right",
-            "direction": "horizontal",
-            "title": null
-        }
-        },
-
         "tooltip": [
           {"field": "state", "title": "State"},
           {"field": "MetricLabel", "title": "Metric"},
-          {"field": "value", "title": "Value (%)", "format": ".1f"}
+          {"field": "value", "title": "Value (%)", "format": ".1f"},
+          {"field": "gap", "title": "Gap (%)", "format": ".1f"}
         ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "window": [{"op": "rank", "as": "rank"}],
+          "sort": [{"field": "gap", "order": "descending"}]
+        },
+        {"filter": "datum.rank == 1"},
+        {"calculate": "'Gap: ' + format(datum.gap, '.1f') + '%'", "as": "gap_label"}
+      ],
+      "mark": {
+        "type": "text",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "align": "left",
+        "baseline": "bottom",
+        "dx": -80,
+        "dy": -2,
+        "color": "#004aad"
+      },
+      "encoding": {
+        "x": {"field": "edu_pct", "type": "quantitative"},
+        "y": {"field": "state", "type": "nominal"},
+        "text": {"field": "gap_label"}
       }
     }
   ]

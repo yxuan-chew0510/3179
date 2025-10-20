@@ -17,7 +17,6 @@ body {
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   padding: 2rem 2.5rem;
-  transform: scale(0.95);          /* Shrink slightly to fit HD screen */
   transform-origin: top center;
 }
 
@@ -101,7 +100,7 @@ header p {
 .story-block {
   width: 100%;
   max-width: 1080px;
-  height: 600px;
+  height: 550px;
   background: #fff;
   border-radius: 16px;
   padding: 2rem 1.5rem;
@@ -173,12 +172,6 @@ header p {
 @media (max-width: 900px) { .chart { height: 320px; } }
 @media (max-width: 600px) { .chart { height: 280px; } }
 
-/* === Donut Chart Centering === */
-#chart4 {
-  justify-content: center;
-  margin-left: 0;
-  transform: scale(1.05);
-}
 
 /* === Footer === */
 .footer {

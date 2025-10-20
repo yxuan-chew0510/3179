@@ -1,23 +1,13 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Comparison of education level distribution (2021) between two Malaysian states.",
   "data": {
     "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
   },
-
   "width": 700,
   "height": 450,
+
   "params": [
-    {
-      "name": "year_select",
-      "value": 2021,
-      "bind": {
-        "input": "range",
-        "min": 2011,
-        "max": 2021,
-        "step": 1,
-        "name": "Select Year: "
-      }
-    },
     {
       "name": "state_select_left",
       "value": "Selangor",
@@ -46,95 +36,113 @@
     }
   ],
 
-  "vconcat": [
+  "hconcat": [
     {
-      "hconcat": [
+      "width": 300,
+      "height": 300,
+      "title": {"text": {"expr": "state_select_left + ' (2021)'"}, "anchor": "middle"},
+      "transform": [
+        {"calculate": "toNumber(datum.year)", "as": "year_num"},
+        {"filter": "datum.year_num == 2021"},
+        {"calculate": "trim(datum.state)", "as": "state_trim"},
+        {"filter": "datum.state_trim == state_select_left"},
         {
-          "width": 300,
-          "height": 300,
-          "title": {"text": {"expr": "state_select_left"}, "anchor": "middle"},
-          "transform": [
-            {"calculate": "toNumber(datum.year)", "as": "year_num"},
-            {"filter": "datum.year_num == year_select"},
-            {"calculate": "trim(datum.state)", "as": "state_trim"},
-            {"filter": "datum.state_trim == state_select_left"},
-            {
-              "calculate": "toNumber(datum.percentage) <= 1 ? toNumber(datum.percentage)*100 : toNumber(datum.percentage)",
-              "as": "pct"
-            },
-            {
-              "aggregate": [{"op": "mean", "field": "pct", "as": "mean_pct"}],
-              "groupby": ["education_level"]
-            }
-          ],
+          "calculate": "toNumber(datum.percentage) <= 1 ? toNumber(datum.percentage)*100 : toNumber(datum.percentage)",
+          "as": "pct"
+        },
+        {"aggregate": [{"op": "mean", "field": "pct", "as": "mean_pct"}], "groupby": ["education_level"]}
+      ],
+      "layer": [
+        {
           "mark": {"type": "arc", "innerRadius": 70, "outerRadius": 120},
           "encoding": {
-            "theta": {"field": "mean_pct", "type": "quantitative"},
+            "theta": {"field": "mean_pct","type": "quantitative"},
             "color": {
               "field": "education_level",
               "type": "nominal",
               "scale": {
-                "domain": ["No Formal Education", "Primary", "Secondary", "Tertiary"],
-                "range": ["#E8F5E9", "#A5D6A7", "#66BB6A", "#2E7D32"]
+                "domain": ["No formal education","Primary","Secondary","Tertiary"],
+                "range": ["#E0ECF4","#9ECAE1","#3182BD","#08519C"]
               },
-              "legend": {
-                "title": "Education Level",
-                "orient": "bottom",
-                "labelFontSize": 12,
-                "titleFontSize": 13
-              }
+              "legend": {"title": "Education Level","orient": "bottom"}
             },
             "tooltip": [
-              {"field": "education_level", "title": "Level"},
-              {"field": "mean_pct", "title": "Share (%)", "format": ".1f"}
+              {"field": "education_level","title": "Level"},
+              {"field": "mean_pct","title": "Share (%)","format": ".1f"}
             ]
           }
         },
         {
-          "width": 300,
-          "height": 300,
-          "title": {"text": {"expr": "state_select_right"}, "anchor": "middle"},
-          "transform": [
-            {"calculate": "toNumber(datum.year)", "as": "year_num"},
-            {"filter": "datum.year_num == year_select"},
-            {"calculate": "trim(datum.state)", "as": "state_trim"},
-            {"filter": "datum.state_trim == state_select_right"},
-            {
-              "calculate": "toNumber(datum.percentage) <= 1 ? toNumber(datum.percentage)*100 : toNumber(datum.percentage)",
-              "as": "pct"
-            },
-            {
-              "aggregate": [{"op": "mean", "field": "pct", "as": "mean_pct"}],
-              "groupby": ["education_level"]
-            }
-          ],
+          "transform": [{"filter": "datum.education_level != 'No formal education'"}],
+          "mark": {
+            "type": "text",
+            "radius": 150,
+            "dy": 10,
+            "fill": "#08306B",
+            "align": "center",
+            "interactive": false
+          },
+          "encoding": {
+            "theta": {"field": "mean_pct","type": "quantitative","stack": true},
+            "text": {"field": "mean_pct","format": ".1f"},
+            "detail": {"field": "education_level"}
+          }
+        }
+      ]
+    },
+
+    {
+      "width": 300,
+      "height": 300,
+      "title": {"text": {"expr": "state_select_right + ' (2021)'"}, "anchor": "middle"},
+      "transform": [
+        {"calculate": "toNumber(datum.year)", "as": "year_num"},
+        {"filter": "datum.year_num == 2021"},
+        {"calculate": "trim(datum.state)", "as": "state_trim"},
+        {"filter": "datum.state_trim == state_select_right"},
+        {
+          "calculate": "toNumber(datum.percentage) <= 1 ? toNumber(datum.percentage)*100 : toNumber(datum.percentage)",
+          "as": "pct"
+        },
+        {"aggregate": [{"op": "mean","field": "pct","as": "mean_pct"}], "groupby": ["education_level"]}
+      ],
+      "layer": [
+        {
           "mark": {"type": "arc", "innerRadius": 70, "outerRadius": 120},
           "encoding": {
-            "theta": {"field": "mean_pct", "type": "quantitative"},
+            "theta": {"field": "mean_pct","type": "quantitative"},
             "color": {
               "field": "education_level",
               "type": "nominal",
               "scale": {
-                "domain": ["No Formal Education", "Primary", "Secondary", "Tertiary"],
-                "range": ["#E8F5E9", "#A5D6A7", "#66BB6A", "#2E7D32"]
+                "domain": ["No formal education","Primary","Secondary","Tertiary"],
+                "range": ["#E0ECF4","#9ECAE1","#3182BD","#08519C"]
               },
-              "legend": null
+              "legend": {"title": "Education Level","orient": "bottom"}
             },
             "tooltip": [
-              {"field": "education_level", "title": "Level"},
-              {"field": "mean_pct", "title": "Share (%)", "format": ".1f"}
+              {"field": "education_level","title": "Level"},
+              {"field": "mean_pct","title": "Share (%)","format": ".1f"}
             ]
+          }
+        },
+        {
+          "transform": [{"filter": "datum.education_level != 'No formal education'"}],
+          "mark": {
+            "type": "text",
+            "radius": 150,
+            "dy": 10,
+            "fill": "#08306B",
+            "align": "center",
+            "interactive": false
+          },
+          "encoding": {
+            "theta": {"field": "mean_pct","type": "quantitative","stack": true},
+            "text": {"field": "mean_pct","format": ".1f"},
+            "detail": {"field": "education_level"}
           }
         }
       ]
     }
-  ],
-
-  "config": {
-    "view": {"stroke": null},
-    "legend": {
-      "orient":"right",
-      "title": "Education Level"
-    }
-  }
+  ]
 }

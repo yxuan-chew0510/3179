@@ -1,44 +1,50 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "width": 700,
-  "height": 450,
-  "autosize": {"type": "fit"},
+  "height": 400,
   "projection": {
     "type": "mercator",
     "center": [110.8, 4.2105],
     "scale": 1950,
     "translate": [395, 170]
   },
-
   "params": [
     {
       "name": "year_select",
       "value": 2021,
-        "bind": {
-          "input": "range",
-          "min": 2011,
-          "max": 2021,
-          "step": 1,
-          "name": "Select Year: "
-        }
+      "bind": {
+        "input": "range",
+        "min": 2011,
+        "max": 2021,
+        "step": 1,
+        "name": "Select Year: "
+      }
     }
   ],
+  "datasets": {
+    "state_centroids": [
+      {"state": "Johor", "lon": 103.45, "lat": 1.85},
+      {"state": "Kedah", "lon": 100.5, "lat": 6.1},
+      {"state": "Kelantan", "lon": 102.3, "lat": 5.3},
+      {"state": "Melaka", "lon": 102.25, "lat": 2.25},
+      {"state": "Negeri Sembilan", "lon": 102.15, "lat": 2.8},
+      {"state": "Pahang", "lon": 102.5, "lat": 3.8},
+      {"state": "Penang", "lon": 100.27, "lat": 5.35},
+      {"state": "Perak", "lon": 101.05, "lat": 4.8},
+      {"state": "Perlis", "lon": 100.25, "lat": 6.6},
+      {"state": "Sabah", "lon": 117.0, "lat": 5.5},
+      {"state": "Sarawak", "lon": 110.5, "lat": 1.0},
+      {"state": "Selangor", "lon": 101.5, "lat": 3.05},
+      {"state": "Terengganu", "lon": 103.0, "lat": 5.0},
+      {"state": "Kuala Lumpur", "lon": 101.7, "lat": 3.13},
+      {"state": "Putrajaya", "lon": 101.68, "lat": 2.93},
+      {"state": "Labuan", "lon": 115.2, "lat": 5.3}
+    ]
+  },
 
   "layer": [
-    {
-      "data": {"sphere": true},
-      "mark": {"type": "geoshape", "fill": "#ecf6ff"}
-    },
-
-    {
-      "data": {"graticule": {"step": [2, 2]}},
-      "mark": {
-        "type": "geoshape",
-        "stroke": "lightgrey",
-        "strokeWidth": 0.8,
-        "opacity": 0.8
-      }
-    },
+    { "data": {"sphere": true}, "mark": {"type": "geoshape", "fill": "#ecf6ff"} },
+    { "data": {"graticule": {"step": [2, 2]}}, "mark": {"type": "geoshape", "stroke": "lightgrey", "strokeWidth": 0.8} },
 
     {
       "data": {
@@ -47,6 +53,7 @@
       "transform": [
         {"filter": "datum.education_level == 'Tertiary'"},
         {"filter": "toNumber(datum.year) == year_select"},
+        {"calculate": "datum.percentage * 100", "as": "percentage_display"},
         {
           "lookup": "state",
           "from": {
@@ -57,10 +64,6 @@
             "key": "properties.name_en"
           },
           "as": "geo"
-        },
-        {
-          "calculate": "datum.percentage * 100",
-          "as": "percentage_display"
         }
       ],
       "mark": {"type": "geoshape", "stroke": "dimgrey"},
@@ -71,23 +74,11 @@
           "type": "quantitative",
           "title": "% Tertiary Education",
           "scale": {"scheme": "greenblue"},
-          "legend": {
-            "gradientLength": 300,
-            "titleAlign": "center",
-            "titleAnchor": "middle",
-            "titleFontSize": 15,
-            "labelFontSize": 14,
-            "orient": "bottom-right"
-          }
+          "legend": {"gradientLength": 300, "orient": "bottom-right"}
         },
         "tooltip": [
-          {
-            "field": "percentage_display",
-            "title": "Tertiary Education Rate (%)",
-            "format": ".2f"
-          },
-          {"field": "u_rate", "title": "Unemployment Rate (%)", "format": ".2f"},
-          {"field": "p_rate", "title": "Participation Rate (%)", "format": ".2f"}
+          {"field": "state", "title": "State"},
+          {"field": "percentage_display", "title": "Tertiary Education (%)", "format": ".1f"}
         ]
       }
     },
@@ -99,37 +90,100 @@
       "transform": [
         {"filter": "datum.education_level == 'Tertiary'"},
         {"filter": "toNumber(datum.year) == year_select"},
-        {
-          "window": [{"op": "rank", "as": "rank"}],
-          "sort": [{"field": "percentage", "order": "descending"}]
-        },
-        {"calculate": "datum.rank == 1", "as": "isTop"},
+        {"calculate": "datum.percentage * 100", "as": "percentage_display"},
+        {"window": [{"op": "rank", "as": "rank_desc"}], "sort": [{"field": "percentage_display", "order": "descending"}]},
+        {"filter": "datum.rank_desc == 1"},
         {
           "lookup": "state",
-          "from": {
-            "data": {
-              "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/week9_homework/education_clean_2021.csv"
-            },
-            "key": "State",
-            "fields": ["Longitude2", "Latitude2"]
-          },
-          "as": ["Longitude2", "Latitude2"]
+          "from": {"data": {"name": "state_centroids"}, "key": "state", "fields": ["lon", "lat"]},
+          "as": ["Longitude", "Latitude"]
+        },
+        {
+          "calculate": "'Highest: ' + datum.state + ' (' + format(datum.percentage_display, '.1f') + '%)'",
+          "as": "label_text"
         }
       ],
       "layer": [
         {
-          "transform": [{"filter": "datum.isTop == true"}],
+          "mark": {"type": "point", "color": "#d66d27", "size": 80, "filled": true},
+          "encoding": {"longitude": {"field": "Longitude"}, "latitude": {"field": "Latitude"}}
+        },
+        {
+          "mark": {"type": "rule", "color": "#d66d27", "strokeWidth": 2},
+          "encoding": {
+            "longitude": {"field": "Longitude"},
+            "latitude": {"field": "Latitude"},
+            "longitude2": {"field": "Longitude", "offset": 25},
+            "latitude2": {"field": "Latitude", "offset": -15}
+          }
+        },
+        {
           "mark": {
             "type": "text",
-            "dy": 10,
-            "fontSize": 0,
-            "color": "black",
-            "fontWeight": "bold"
+            "align": "left",
+            "dx": 30,
+            "dy": -15,
+            "fontWeight": "bold",
+            "fontSize": 12,
+            "color": "#d66d27"
           },
           "encoding": {
-            "longitude": {"field": "Longitude2"},
-            "latitude": {"field": "Latitude2"},
-            "text": {"field": "state"}
+            "longitude": {"field": "Longitude"},
+            "latitude": {"field": "Latitude"},
+            "text": {"field": "label_text"}
+          }
+        }
+      ]
+    },
+
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/yxuan-chew0510/3179/refs/heads/main/DV2/dataset/edu_lfs_merged.csv"
+      },
+      "transform": [
+        {"filter": "datum.education_level == 'Tertiary'"},
+        {"filter": "toNumber(datum.year) == year_select"},
+        {"calculate": "datum.percentage * 100", "as": "percentage_display"},
+        {"window": [{"op": "rank", "as": "rank_asc"}], "sort": [{"field": "percentage_display", "order": "ascending"}]},
+        {"filter": "datum.rank_asc == 1"},
+        {
+          "lookup": "state",
+          "from": {"data": {"name": "state_centroids"}, "key": "state", "fields": ["lon", "lat"]},
+          "as": ["Longitude", "Latitude"]
+        },
+        {
+          "calculate": "'Lowest: ' + datum.state + ' (' + format(datum.percentage_display, '.1f') + '%)'",
+          "as": "label_text"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {"type": "point", "color": "#004aad", "size": 80, "filled": true},
+          "encoding": {"longitude": {"field": "Longitude"}, "latitude": {"field": "Latitude"}}
+        },
+        {
+          "mark": {"type": "rule", "color": "#004aad", "strokeWidth": 2},
+          "encoding": {
+            "longitude": {"field": "Longitude"},
+            "latitude": {"field": "Latitude"},
+            "longitude2": {"field": "Longitude", "offset": 25},
+            "latitude2": {"field": "Latitude", "offset": 15}
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": -48,
+            "dy": 60,
+            "fontWeight": "bold",
+            "fontSize": 12,
+            "color": "#004aad"
+          },
+          "encoding": {
+            "longitude": {"field": "Longitude"},
+            "latitude": {"field": "Latitude"},
+            "text": {"field": "label_text"}
           }
         }
       ]
